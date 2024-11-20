@@ -1,0 +1,180 @@
+name: Build-and-Deploy-to-Production
+
+on:
+  workflow_call:
+
+env:
+  #  GH_TOKEN: ${{ secrets.GH_PAT_HDT }}
+  GMAIL_APP_PASSWORD: ${{ vars.GMAIL_APP_PASSWORD }}
+  GMAIL_USER: ${{ vars.GMAIL_USER }}
+  INSTALLER_USERID: ${{ vars.INSTALLER_USERID }}
+  INSTALLER_PWD: ${{ vars.INSTALLER_PWD }}
+  MYSQL_HOST: ${{ vars.MYSQL_HOST }}
+  MYSQL_TCP_PORT: ${{ vars.MYSQL_TCP_PORT }}
+  MYSQL_DATABASE: ${{ vars.MYSQL_DATABASE }}
+  MYSQL_PWD: ${{ vars.MYSQL_PWD }}
+  MYSQL_ROOT_PASSWORD: ${{ vars.MYSQL_ROOT_PASSWORD }}
+  VENV_ENVIRONMENT: ${{ vars.VENV_ENVIRONMENT }}
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      id-token: write
+      contents: write
+      issues: write
+      pull-requests: write
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ 'ubuntu-latest' ]
+        python-version: [ '3.12' ]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Configure Poetry
+        run: |
+          poetry config http-basic.github.com x-access-token ${{ secrets.GH_REPO_ACCESS_BY_OWN_APPS }}
+
+      - name: Install dependencies using Poetry
+        run: poetry install
+
+      - name: Build the application using Poetry
+        run: poetry build
+
+      - name: Run tests or additional checks
+        run: poetry run pytest  # Replace it with your test command
+
+  merge:
+    needs: build
+    runs-on: ${{ matrix.os }}
+
+    permissions:
+      id-token: write
+      contents: write
+      issues: write
+      pull-requests: write
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ 'ubuntu-latest' ]
+        python-version: [ '3.12' ]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set Git identity
+        run: |
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+
+      - name: Merge into master
+        id: merge
+        run: |
+          git checkout master
+          git merge --no-ff $GITHUB_REF
+        continue-on-error: false
+
+      - name: Push to master
+        if: steps.merge.outcome == 'success'
+        run: |
+          git push origin master
+
+  publish:
+    needs: merge
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ 'ubuntu-latest' ]
+        python-version: [ '3.12' ]
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: New release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ vars.GITHUB_HEAD_REF }}
+          name: ${{ vars.GITHUB_HEAD_REF }}
+          body_path: ${{ github.workspace }}/ReleaseNotes.md
+          draft: false
+          prerelease: false
+
+      - name: Send release email notification
+        uses: betterfor/action-send-mail@main
+        with:
+          server_address: mail.realtimeevents.co
+          server_port: 465
+          username: ${{ vars.GMAIL_USER }}
+          password: ${{ vars.GMAIL_APP_PASSWORD }}
+          subject: 'New Release: ${{ github.repository }} ${{ github.ref_name }}'
+          to: rte-development@brightedge.co.za
+          from: Development Messenger>
+          # body: Build job of ${{github.repository}} completed successfully!
+          html_body: '		<table style="font-family: verdana;font-size:90%; border-collapse:collapse; border-style: double; border-color: 000000; border-width: 3px">
+            <colgroup>
+              <col style="text-align:right">
+              <col style="text-align:left">
+            </colgroup>
+            <tr>
+              <th style="text-align: center; border-bottom-style: double; border-right-style: double; border-right-width: 1px; border-bottom-width: 3px">Description</th>
+              <th style="text-align: center; border-bottom-style: double; border-left-style: double; border-bottom-width: 3px; border-left-width: 1px">Detail</th>
+            </tr>
+            <tr>
+              <td style="text-align: right; border-right-style: solid; border-bottom-style: dotted; border-right-width: 1px;border-bottom-width: 1px">Repository:</td>
+              <td style="text-align: left; border-bottom-style: dotted; border-left-style: solid; border-left-width: 1px;border-bottom-width: 1px">${{ github.repository }}</td>
+            </tr>
+            <tr>
+              <td style="text-align: right; border-right-style: solid; border-bottom-style: dotted; border-right-width: 1px;border-bottom-width: 1px">Release:</td>
+              <td style="text-align: left; border-bottom-style: dotted; border-left-style: solid; border-left-width: 1px;border-bottom-width: 1px">${{ github.ref_name }}</td>
+            </tr>
+            <tr>
+              <td style="text-align: right; border-right-style: solid; border-bottom-style: dotted; border-right-width: 1px;border-bottom-width: 1px">Actor:</td>
+              <td style="text-align: left; border-bottom-style: dotted; border-left-style: solid; border-left-width: 1px;border-bottom-width: 1px">${{ github.actor }}</td>
+            </tr>
+            <tr>
+              <td style="text-align: right; border-right-style: solid; border-bottom-style: dotted; border-right-width: 1px;border-bottom-width: 1px">Workflow:</td>
+              <td style="text-align: left; border-bottom-style: dotted; border-left-style: solid; border-left-width: 1px;border-bottom-width: 1px">${{ github.workflow }}</td>
+            </tr>
+            <tr>
+              <td style="text-align: right; border-right-style: solid; border-right-width: 1px">Release URL:</td>
+              <td style="text-align: left; border-left-style: solid; border-left-width: 1px"><a href="https://github.com/${{ github.repository }}/releases/tag/${{github.ref_name}}">Click here</a></td>
+            </tr>
+          </table><br>'
+          # cc: a@example.com,b@example.com
+          # bcc: c@example.com,d@example.com
+          # Optional recipient of the email response
+          # reply_to: luke@example.com
+          # Optional Message ID this message is replying to
+          # in_reply_to: <random-luke@example.com>
+          # Optional converting Markdown to HTML (set content_type to text/html too)
+          # convert_markdown: true
+          # Optional attachments
+          # attachments: README.md
+          # Optional priority: 'high', 'normal' (default) or 'low'
+          priority: normal

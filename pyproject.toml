@@ -1,0 +1,81 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 120
+target-version = ["py312"]
+
+[tool.codespell]
+count = ''
+quiet-level = 2
+skip = 'documentation/Archive/*'
+ignore-words-list = 'space-holder'
+
+[tool.coverage.run]
+source = ['src', 'tests']
+
+[tool.isort]
+profile = "black"
+
+[tool.poetry]
+name = 'rtecommon'
+version = '1.1.0'
+description = 'Common tools/utilities/configurations used in the RealTime Events echo system.'
+authors = [
+    "Hendrik du Toit <hendrik@brightedge.co.za>",
+    "Henru du Toit <henru@brightedge.co.za>",
+    "Dirk du Toit <dirk@brightedge.co.za>"
+]
+license = "file:LICENSE"
+readme = "README.md"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: System Administrators",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Office/Business",
+    "Programming Language :: Python :: 3.12"
+]
+# documentation = "https://readthedocs.org"
+homepage = 'https://github.com/RealTimeEvents/rtecommon'
+repository = "https://github.com/RealTimeEvents/rtecommon.git"
+
+[tool.poetry.dependencies]
+python = "^3.12.2"
+pydantic-settings = "^2.4.0"
+mysql-connector-python = "^9.0.0"
+pydantic = "^2.8.2"
+sqlalchemy = "==1.4.52"
+
+[tool.poetry.group.dev.dependencies]
+isort = "^5.13.2"
+mdformat-gfm = "^0.3.6"
+mdformat-frontmatter = "^2.0.8"
+mdformat-footnote = "^0.1.1"
+pygments = "^2.16.999"
+pytest = "^8.3.2"
+pytest-cov = "^5.0.0"
+rstcheck = "^6.2.4"
+black = "^24.8.0"
+flake8 = "^7.1.1"
+pre-commit = "^3.8.0"
+build = "^1.2.1"
+
+[tool.poetry.urls]
+changelog = "https://github.com/RealTimeEvents/rtecommon/blob/master/ReleaseNotes.md"
+issues = "https://github.com/RealTimeEvents/rtecommon/issues"
+
+[tool.pytest.ini_options]
+addopts = ['-vv', '--ignore-glob=*\\Archive']
+#addopts = ['--import-mode=importlib', "-v", "--cov=./", "--ignore-glob=*\\Archive", "--cov-report=html"]
+markers = [
+    "config: Run config tests",
+    "dbdef: Run dbdef tests ",
+    "select: Run a selection of tests",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+]
+pythonpath = ['src', 'src/rtedb', 'tests']
+testpaths = 'tests'

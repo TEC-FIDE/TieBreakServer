@@ -1,0 +1,19 @@
+name: Deployment Pipeline
+
+on:
+  push:
+
+jobs:
+  Pre-Commit-and-Document-Check:
+    uses: ./.github/workflows/01-pre-commit-and-document-check.yaml
+
+  CI:
+    needs: Pre-Commit-and-Document-Check
+    uses: ./.github/workflows/03-ci.yaml
+    secrets: inherit
+
+  Build-and-Deploy-to-Production:
+    needs: CI
+    if: startsWith(github.ref, 'refs/tags/')
+    uses: ./.github/workflows/04-build-and-deploy-to-production.yaml
+    secrets: inherit

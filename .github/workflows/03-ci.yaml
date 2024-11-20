@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  workflow_call:
+
+jobs:
+  CI:
+    runs-on: ${{matrix.os}}
+    env:
+      GH_REPO_ACCESS_BY_OWN_APPS: ${{ secrets.GH_REPO_ACCESS_BY_OWN_APPS }}
+      INSTALLER_PWD: ${{vars.INSTALLER_PWD}}
+      INSTALLER_USERID: ${{vars.INSTALLER_USERID}}
+      MYSQL_DATABASE: ${{vars.MYSQL_DATABASE}}
+      MYSQL_HOST: ${{vars.MYSQL_HOST}}
+      MYSQL_PWD: ${{vars.MYSQL_PWD}}
+      MYSQL_ROOT_PASSWORD: ${{vars.MYSQL_ROOT_PASSWORD}}
+      MYSQL_TCP_PORT: ${{vars.MYSQL_TCP_PORT}}
+      VENV_ENVIRONMENT: ${{vars.VENV_ENVIRONMENT}}
+    strategy:
+      fail-fast: true
+      matrix:
+        #        python-version: ['3.8', '3.9', '3.10', '3.11']
+        python-version: [ '3.12' ]
+        #        os: ['ubuntu-latest', 'windows-latest', 'macos-latest']
+        os: [ 'ubuntu-latest' ]
+    services:
+      mysql:
+        image: mysql:8.3.0
+        ports:
+          - ${{vars.MYSQL_TCP_PORT}}:3306
+        options:
+          --health-cmd="mysqladmin ping"
+          --health-cmd="mysqladmin ping -h localhost -u root -p${{ vars.MYSQL_ROOT_PASSWORD }}"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+        env:
+          INSTALLER_PWD: ${INSTALLER_PWD}
+          INSTALLER_USERID: ${INSTALLER_USERID}
+          MYSQL_DATABASE: ${{vars.MYSQL_DATABASE}}
+          MYSQL_ROOT_PASSWORD: ${{vars.MYSQL_ROOT_PASSWORD}}
+          VENV_ENVIRONMENT: ${{vars.VENV_ENVIRONMENT}}
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          architecture: x64
+
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
+
+      - name: Configure Poetry
+        run: |
+          poetry config keyring.enabled false
+          poetry config http-basic.rtecommon x-access-token ${{ secrets.GH_REPO_ACCESS_BY_OWN_APPS }}
+#          poetry config http-basic.github.com x-access-token ${{ secrets.GH_REPO_ACCESS_BY_OWN_APPS }}
+
+      - name: Verify DB exists
+        run: mysql --host ${{env.MYSQL_HOST}} -uroot -p${{env.MYSQL_ROOT_PASSWORD}} -e "SHOW DATABASES"
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$PWD:$PWD/src/rtecommon" >> $GITHUB_ENV
+
+      #      - name: Install editable package
+      #        run: pip install -e .[dev]
+
+      - name: Install dependencies
+        run: |
+          poetry install --with dev
+
+      #      # Create the user, else the pytests fail
+      #      - name: Create Reahl db user
+      #        run: reahl createdbuser etc
+
+      - name: Run pytest
+        run: |
+          echo "PythonPath=$PYTHONPATH"
+          poetry run pytest  --cov=./
+
