@@ -1,6 +1,12 @@
 """
-Created on Fri Aug 18 08:28:13 2023
-@author: Otto Milvang, sjakk@milvang.no
+rating.py
+=========
+
+A brief description of what this module does.
+
+:author: Otto Milvang <sjakk@milvang.no>
+:copyright: (c) 2023 Otto Milvang
+:license: MIT License
 """
 
 from decimal import Decimal
@@ -97,7 +103,7 @@ def ComputePerfectTournamentPerformance(score, ratingsopp):
     # avoid infinite loop on illegal input
     if score > len(ratingsopp):
         return max(ratingsopp) + 800
-    # invariant: low < ptp,  high >= ptp
+    # invariant: low < ptp, high >= ptp
     # when high-low == 1 then ptp = high
     num = len(ratingsopp)
     if num == 0:

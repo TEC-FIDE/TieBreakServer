@@ -1,6 +1,12 @@
 """
-Created on Wed Nov  1 11:01:49 2023
-@author: Otto Milvang, sjakk@milvang.no
+chessjson.py
+============
+
+A brief description of what this module does.
+
+:author: Otto Milvang <sjakk@milvang.no>
+:copyright: (c) 2023 Otto Milvang
+:license: MIT License
 """
 
 import json
@@ -140,7 +146,7 @@ class chessjson:
         tournament[key] = value
 
     # append_profile
-    # check if a profile exist in the profile list.
+    # check if a profile exists in the profile list.
     # if True: Update the profile object and return the ID
     # if False: Add the profile to the profile list
 
@@ -178,7 +184,7 @@ class chessjson:
         return tid
 
     # append_result
-    # check if a result exist in the result list.
+    # check if a result exists in the result list.
     # if True: Update the result object with the new result and return the ID
     # if False: Add the result to the result list
 
@@ -317,7 +323,7 @@ class chessjson:
             res = reverse[result[color[0] + "Result"]]
         else:
             return 0.0
-        # if res == 'W' and result['black'] > 0:  // Full point bye is not vur
+        # if res == 'W' and result['black'] > 0: // Full point bye is not vur
         if res == "W":
             return False
         return True
@@ -367,7 +373,7 @@ class chessjson:
         return score
 
     # update_chessjson_format
-    # Remove  'teamSection' and 'playerSection'
+    # Remove 'teamSection' and 'playerSection'
 
     def update_tournament_random(self, tournament, isteam):
         update = False

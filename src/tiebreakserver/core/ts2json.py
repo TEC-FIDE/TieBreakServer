@@ -1,6 +1,12 @@
 """
-Created on Thu Oct 19 11:55:32 2023
-@author: Otto Milvang, sjakk@milvang.no
+ts2json.py
+==========
+
+A brief description of what this module does.
+
+:author: Otto Milvang <sjakk@milvang.no>
+:copyright: (c) 2023 Otto Milvang
+:license: MIT License
 """
 
 import xml.etree.ElementTree as ET
@@ -713,7 +719,7 @@ class ts2json(chessjson.chessjson):
 
     # ==============================
     #
-    # Read tournament player in TS file
+    # Read tournament player in a TS file
     #
 
     def parse_ts_player(self, player, tournament, rank):
@@ -887,7 +893,7 @@ class ts2json(chessjson.chessjson):
 
     # ==============================
     #
-    # Read tournament team in TS file
+    # Read tournament team in a TS file
     #
 
     def parse_ts_team(self, team, tournament, rank):

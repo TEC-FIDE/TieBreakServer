@@ -1,13 +1,17 @@
 """
-Created on Mon Aug  7 16:48:53 2023
-@author: Otto Milvang, sjakk@milvang.no
+convert.py
+==========
+
+A brief description of what this module does.
+
+:author: Otto Milvang <sjakk@milvang.no>
+:copyright: (c) 2023 Otto Milvang
+:license: MIT License
 """
 
 import sys
 
 from commonmain import commonmain
-
-# ==============================
 
 
 class convert2jch(commonmain):

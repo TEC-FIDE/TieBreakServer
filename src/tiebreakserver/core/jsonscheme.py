@@ -1,6 +1,12 @@
 """
-Created on Thu Jun 27 07:51:15 2024
-@author: Otto Milvang, sjakk@milvang.no
+jsonscheme.py
+=============
+
+A brief description of what this module does.
+
+:author: Otto Milvang <sjakk@milvang.no>
+:copyright: (c) 2024 Otto Milvang
+:license: MIT License
 """
 
 json_scheme = {

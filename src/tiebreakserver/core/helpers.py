@@ -1,15 +1,17 @@
 """
-Created on Tue Oct 31 13:57:55 2023
-@author: Otto Milvang, sjakk@milvang.no
+helpers.py
+==========
+
+A brief description of what this module does.
+
+:author: Otto Milvang <sjakk@milvang.no>
+:copyright: (c) 2023 Otto Milvang
+:license: MIT License
 """
 
 import json
 import sys
 from decimal import Decimal
-
-# ==============================
-#
-#  Helpers
 
 
 def parse_date(date):
@@ -65,7 +67,7 @@ def to_base36(num):
 
 # return -1 if different
 # return 1 if equal
-# return 0 if dont know
+# return 0 if you don't know
 def is_equal(txt, struct1, struct2):
     if not (txt in struct1 and txt in struct2):
         return 0
@@ -176,7 +178,7 @@ def solve_scoresystem(equations):
 # Returns a file format.
 #
 # Parameters:
-#     $filename - Filename of tournament file
+#     $filename - Filename of a tournament file
 #
 
 

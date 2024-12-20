@@ -62,7 +62,7 @@ python  tiebreakchecker.py
 
 > Rank order specifiers
 >
-> The Rank order specifiers has the form **TB:PS#Mn-optlist**
+> The Rank order specifiers has the form **TB: PS#Mn-optlist**
 >
 > - **TB** - required, TieBreak name
 > - **:PS** - Point system name for team competitions, <br>MP=match points(default), <br>GP=game points
@@ -75,7 +75,7 @@ python  tiebreakchecker.py
 > **Examples**
 >
 > - **PTS** - Points<br>
-> - **BH:GP#C1** - Buchholz cut-1 calculated on game points
+> - **BH: GP#C1** - Buchholz cut-1 calculated on game points
 > - **DE-P** - Direct encounter, forfeited games, either wins or losses, are considered as played games against the
 >   scheduled opponent <br>
 

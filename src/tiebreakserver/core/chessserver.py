@@ -1,7 +1,13 @@
 #! C:/Program Files/Python313/python.exe
 """
-Created on Mon Oct 25 08:16:13 2024
-@author: Otto Milvang, sjakk@milvang.no
+chessserver.py
+==============
+
+A brief description of what this module does.
+
+:author: Otto Milvang <sjakk@milvang.no>
+:copyright: (c) 2023 Otto Milvang
+:license: MIT License
 """
 import sys
 

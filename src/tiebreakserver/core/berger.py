@@ -1,35 +1,39 @@
 """
-Created on Sun Nov 12 15:50:51 2023
-@author: Otto Milvang, sjakk@milvang.no
-"""
+berger.py
+=========
 
-# bergertables is the core of the round robin,
-# Se FIDE handbook
-# C: General Rules and Technical Recommendations for Tournaments
-# 05. General Regulations for Competitions / General Regulations for Competitions.
-# Annex 1: Details of Berger Table
-#
-# n is he number of players, odd numbers are lifted to the first even number
-# returns a 3-level dict
-#   1-dim - 1 .. n-1 is [round_number]
-#   2-dim - 1 .. n/2 is [pair_number]
-#   3-dim - {'white', 'black'} - players numbered 1 .. n
-# rr = bergertables(n)
-# # In round 6, board 2:
-# white = rr['parining'][6][2]['white']
-# black = rr['parining'][6][2]['black']
+bergertables is the core of the round robin,
+See FIDE handbook
+C: General Rules and Technical Recommendations for Tournaments
+05. General Regulations for Competitions / General Regulations for Competitions.
+Annex 1: Details of Berger Table
+
+n is he number of players, odd numbers are lifted to the first even number
+returns a 3-level dict
+  1-dim - 1 .. n-1 is [round_number]
+  2-dim - 1 .. n/2 is [pair_number]
+  3-dim - {'white', 'black'} - players numbered 1 .. n
+rr = bergertables(n)
+In round 6, board 2:
+white = rr['pairing'][6][2]['white']
+black = rr['pairing'][6][2]['black']
+
+:author: Otto Milvang <sjakk@milvang.no>
+:copyright: (c) 2023 Otto Milvang
+:license: MIT License
+"""
 
 
 def bergertables(nplayers):
     nplayers += nplayers % 2
     pairs = nplayers // 2
-    bergertable = {"players": nplayers, "parining": {}}
-    bergertable["parining"][1] = pairing = {
+    bergertable = {"players": nplayers, "pairing": {}}
+    bergertable["pairing"][1] = pairing = {
         boardno: {"white": boardno, "black": nplayers - boardno + 1} for boardno in range(1, pairs + 1)
     }  # First round
     (wp, wc, bp, bc) = (1, "white", pairs, "black")
     for rnd in range(2, nplayers):
-        bergertable["parining"][rnd] = newpairing = {}
+        bergertable["pairing"][rnd] = newpairing = {}
         newpairing[1] = {"white": pairing[wp]["black"], "black": pairing[bp][bc]}
         for board in range(2, pairs):
             newpairing[board] = {
@@ -42,26 +46,24 @@ def bergertables(nplayers):
     return bergertable
 
 
-"""
-The generic BergerTable follows the description in the paper "Berger explained".
-Its made generic,  so its should be easy to translate it into other programming languages.
-https://www.milvang.no/berger/BergerExplained.pdf
-"""
-
-
 def bergertablesGeneric(nplayers):
-    # Let N be the number of players (or number of players + 1 if the number of players are odd)
+    """
+    The generic BergerTable follows the description in the paper "Berger explained".
+    Its made generic, so it should be easy to translate it into other programming languages.
+    https://www.milvang.no/berger/BergerExplained.pdf
+    """
+    # Let N be the number of players (or number of players + 1 if the number of players is odd)
     # The players are assigned a pairing number 1 to N. The number of boards is B = N/2.
     nplayers += nplayers % 2
     pairs = nplayers // 2
-    bergertable = {"players": nplayers, "parining": {}}
+    bergertable = {"players": nplayers, "pairing": {}}
 
-    # In the first round the lowest half will have white and the highest half black.
-    # In general, on board b, where b is in the range 1 ... B,  player m shall have white against player N-m+1.
+    # In the first round, the lowest half will have white and the highest half black.
+    # In general, on board b, where b is in the range 1 ... B, player m shall have white against player N-m+1.
     pairing = {}
     for board in range(1, pairs + 1):
         pairing[board] = {"white": board, "black": nplayers - board + 1}
-    bergertable["parining"][1] = pairing
+    bergertable["pairing"][1] = pairing
 
     # nplayeriswhite is a flag to alternate color for player N
     nplayeriswhite = False
@@ -93,7 +95,7 @@ def bergertablesGeneric(nplayers):
             black = playerlist.pop()
             white = playerlist.pop()
             pairing[board] = {"white": white, "black": black}
-        bergertable["parining"][rnd] = pairing
+        bergertable["pairing"][rnd] = pairing
         # Repeat from step 1 until all rounds are paired.
     return bergertable
 
@@ -106,8 +108,8 @@ def bergertablesGeneric(nplayers):
 
 
 def bergerpairing(bergertable, rnd, board):
-    if rnd in bergertable["parining"] and board in bergertable["parining"][rnd]:
-        return bergertable["parining"][rnd][board]
+    if rnd in bergertable["pairing"] and board in bergertable["pairing"][rnd]:
+        return bergertable["pairing"][rnd][board]
     return None
 
 
@@ -124,8 +126,8 @@ def bergercrosstables(bergertable):
     bergertable["crosstable"] = crosstable = {wplayer: {} for wplayer in range(1, nplayers + 1)}
     for rnd in range(1, nplayers):
         for board in range(1, pairs + 1):
-            w = bergertable["parining"][rnd][board]["white"]
-            b = bergertable["parining"][rnd][board]["black"]
+            w = bergertable["pairing"][rnd][board]["white"]
+            b = bergertable["pairing"][rnd][board]["black"]
             crosstable[w][b] = {"round": rnd, "board": board}
             crosstable[b][w] = {"round": rnd + nplayers - 1, "board": board}
     return bergertable

@@ -1,6 +1,12 @@
 """
-Created on Mon Aug  7 16:48:53 2023
-@author: Otto Milvang, sjakk@milvang.no
+Module Name
+===========
+
+A brief description of what this module does.
+
+:author: Otto Milvang <sjakk@milvang.no>
+:copyright: (c) 2023 Otto Milvang
+:license: MIT License
 """
 
 import argparse
@@ -158,7 +164,7 @@ def read_command_line():
 
 
 def read_input_file(params):
-    # Read input file
+    # Read an input file
     match (params["file_format"]):
         case "JSON":
             chessfile = chessjson()
