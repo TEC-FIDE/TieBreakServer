@@ -10,7 +10,7 @@ target-version = ["py312"]
 count = ''
 quiet-level = 2
 skip = 'documentation/Archive/*'
-ignore-words-list = 'space-holder'
+ignore-words-list = 'add-word-here'
 
 [tool.coverage.run]
 source = ['src', 'tests']
@@ -19,27 +19,24 @@ source = ['src', 'tests']
 profile = "black"
 
 [tool.poetry]
-name = 'rtecommon'
-version = '1.1.0'
-description = 'Common tools/utilities/configurations used in the RealTime Events echo system.'
+name = 'TieBreakServer'
+version = '1.0.0'
+description = 'The TieBreakServer is an open-source project by the FIDE Technical Committee, providing developers with fast, accurate, and consistent tie-break calculations while ensuring rapid implementation of updated pairing regulations.'
 authors = [
-    "Hendrik du Toit <hendrik@brightedge.co.za>",
-    "Henru du Toit <henru@brightedge.co.za>",
-    "Dirk du Toit <dirk@brightedge.co.za>"
+    "Otto Milvang <sjakk@milvang.no>"
+    #    "Hendrik du Toit <hendrik@brightedge.co.za>"
 ]
 license = "file:LICENSE"
 readme = "README.md"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "Intended Audience :: System Administrators",
-    "Topic :: Internet :: WWW/HTTP",
     "Topic :: Office/Business",
     "Programming Language :: Python :: 3.12"
 ]
 # documentation = "https://readthedocs.org"
-homepage = 'https://github.com/RealTimeEvents/rtecommon'
-repository = "https://github.com/RealTimeEvents/rtecommon.git"
+homepage = 'https://github.com/TEC-FIDE/TieBreakServer'
+repository = "https://github.com/TEC-FIDE/TieBreakServer.git"
 
 [tool.poetry.dependencies]
 python = "^3.12.2"
@@ -47,6 +44,7 @@ pydantic-settings = "^2.4.0"
 mysql-connector-python = "^9.0.0"
 pydantic = "^2.8.2"
 sqlalchemy = "==1.4.52"
+fastapi = "^0.115.5"
 
 [tool.poetry.group.dev.dependencies]
 isort = "^5.13.2"
@@ -63,8 +61,8 @@ pre-commit = "^3.8.0"
 build = "^1.2.1"
 
 [tool.poetry.urls]
-changelog = "https://github.com/RealTimeEvents/rtecommon/blob/master/ReleaseNotes.md"
-issues = "https://github.com/RealTimeEvents/rtecommon/issues"
+changelog = "https://github.com/TEC-FIDE/TieBreakServer/blob/master/ReleaseNotes.md"
+issues = "https://github.com/TEC-FIDE/TieBreakServer/blob/master/issues"
 
 [tool.pytest.ini_options]
 addopts = ['-vv', '--ignore-glob=*\\Archive']

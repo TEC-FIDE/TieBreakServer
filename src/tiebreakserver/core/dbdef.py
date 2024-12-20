@@ -2,18 +2,17 @@
 INSTALLER_USERID=rtinstall;INSTALLER_PWD=N0Pa55wrd;MYSQL_DATABASE=rte_db;MYSQL_HOST=localhost;MYSQL_TCP_PORT=50002;SQLALCHEMY_SILENCE_UBER_WARNING=1
 """
 
+from rteapi.core.config import get_settings
 from sqlalchemy import create_engine
 from sqlalchemy import engine
 from sqlalchemy.orm import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from rteapi.core.config import get_settings
-
 settings = get_settings()
 
 
 SQLALCHEMY_DATABASE_URL = engine.URL.create(
-    'mysql+mysqlconnector',
+    "mysql+mysqlconnector",
     username=settings.INSTALLER_USERID,
     password=settings.INSTALLER_PWD,
     host=settings.MYSQL_HOST,
